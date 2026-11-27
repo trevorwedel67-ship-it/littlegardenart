@@ -3,7 +3,7 @@ import { IMG } from "./images.mts"
 export const SITE = "Little Garden Art"
 export const ARTIST = "Patricia Ann Wedel"
 export const IG = "https://www.instagram.com/littlegardenart/"
-const ASSET_V = "5"
+const ASSET_V = "6"
 
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!))
 export const money = (n: number) => "$" + (Number.isInteger(+n) ? +n : (+n).toFixed(2))
@@ -124,8 +124,6 @@ export function home(c: any, o: string) {
   <div class="bfly" aria-hidden="true"><img class="brush" src="/img/brush.webp" alt="" width="1400" height="74"></div>
   <div class="itext"><span class="hand">Little Garden Art</span><h1 class="ititle">Every painting begins with a brush</h1><p class="soft">Original art by Patsy Wedel</p></div>
   <div class="iend"><p class="hand">&hellip;and ends on your wall.</p></div>
-  <a class="iskip" href="#paintings">Skip to the paintings &darr;</a>
-  <span class="icue" aria-hidden="true">Scroll</span>
  </div>
 </section>`
   const hero = `<section class="hero teal" id="paintings" aria-label="Featured work">
@@ -164,8 +162,7 @@ export function home(c: any, o: string) {
   <div class="ctrls"><div class="tabs" role="group" aria-label="Jump to slide">
     <button type="button" data-go="0" aria-current="true"><span>Christmas</span><i><b></b></i></button>
     <button type="button" data-go="1"><span>The West</span><i><b></b></i></button>
-    <button type="button" data-go="2"><span>Little ones</span><i><b></b></i></button></div>
-    <span class="scrollhint">Scroll</span></div>
+    <button type="button" data-go="2"><span>Little ones</span><i><b></b></i></button></div></div>
  </div></div>
 </section><div class="ledge"></div>`
   const body = `${intro}${hero}
