@@ -96,4 +96,75 @@ $('[data-buy]')?.addEventListener('click', e => {
     a.sold ? `Hi Patsy! I saw "${a.t}" has sold. Could you paint something similar?` : `Hi Patsy! I'd like to buy your original "${a.t}" (${money(a.p)}). Is it still available?`);
 });
 $$('[data-ask]').forEach(b => b.addEventListener('click', () => openOrder({ t: 'A custom painting', m: 'Commissions are priced per piece.', p: 0, img: '/img/farmhouse-640.webp', a: 'A farmhouse painted by Patsy' }, b.dataset.ask)));
+
+/* intro brush */
+{
+const intro = document.getElementById('intro');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+if (intro && !reduce.matches) {
+  intro.classList.add('anim');
+  const pin = intro.querySelector('.ipin'), fly = intro.querySelector('.bfly'), brushImg = fly.querySelector('img');
+  const path = intro.querySelector('#sp'), svg = intro.querySelector('.stroke');
+  // where the brush lies in the desk photo (2400x1350 source): tip and butt end
+  const PH = { w: 2400, h: 1350, tip: [2362, 730], butt: [38, 625] };
+  let W = 0, H = 0, len = 0, raf = 0;
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  function layout() {
+    W = pin.clientWidth; H = pin.clientHeight;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const m = W < 720;
+    const d = m
+      ? `M ${W*.16} ${H*.62} C ${W*.45} ${H*.48}, ${W*.9} ${H*.58}, ${W*.6} ${H*.70} S ${W*.15} ${H*.84}, ${W*.82} ${H*.86}`
+      : `M ${W*.14} ${H*.70} C ${W*.30} ${H*.42}, ${W*.42} ${H*.95}, ${W*.58} ${H*.68} S ${W*.78} ${H*.34}, ${W*.88} ${H*.52}`;
+    path.setAttribute('d', d); len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    path.setAttribute('stroke-width', m ? 11 : 16);
+    update();
+  }
+  function landing() {
+    const s = Math.max(W / PH.w, H / PH.h), dx = W < 720 ? .96 : .5, ox = (W - PH.w * s) * dx, oy = (H - PH.h * s) / 2;
+    const tx = ox + PH.tip[0] * s, ty = oy + PH.tip[1] * s, bx = ox + PH.butt[0] * s, by = oy + PH.butt[1] * s;
+    const L = Math.hypot(tx - bx, ty - by);
+    return { x: tx, y: ty, a: Math.atan2(ty - by, tx - bx) * 180 / Math.PI, w: L * 2152 / 2132 };
+  }
+  function update() {
+    raf = 0;
+    const r = intro.getBoundingClientRect(), span = Math.max(1, intro.offsetHeight - H);
+    const p = clamp(-r.top / span);
+    const baseW = Math.min(W * (W < 720 ? .55 : .3), 480);
+    const spin = ease(clamp((p - .04) / .16));               // swivel in place first
+    const paint = clamp((p - .2) / .38), land = ease(clamp((p - .6) / .25)), swap = clamp((p - .86) / .08);
+    const at = Math.max(.001, paint) * len, pt = path.getPointAtLength(at), pb = path.getPointAtLength(Math.max(0, at - 8));
+    const tang = Math.atan2(pt.y - pb.y, pt.x - pb.x) * 180 / Math.PI;
+    // held like a pen: handle up and to the right, nudged by the stroke direction
+    const held = 128 + (paint > 0 ? Math.sin(tang * Math.PI / 180) * 14 : 0);
+    let a = held + 360 * spin;
+    const L = landing();
+    const x = lerp(pt.x, L.x, land), y = lerp(pt.y, L.y, land);
+    let d = L.a - a; d = ((d + 540) % 360) - 180; a = a + d * land;
+    const w = lerp(baseW, L.w, land);
+    const roll = (spin + paint) * Math.PI * 2;               // turning on its own length
+    const sy = (.72 + .28 * Math.cos(roll)) * (1 - land) + land;
+    const lift = Math.sin(Math.PI * land) * -40;
+    fly.style.setProperty('--bw', w + 'px');
+    fly.style.transform = `translate(${x - w * .99}px, ${y - (w * 74 / 1400) / 2 + lift}px) rotate(${a}deg) scaleY(${sy})`;
+    fly.style.opacity = 1 - swap;
+    intro.style.setProperty('--swap', swap);
+    fly.classList.toggle('idle', p < .03);
+    path.style.strokeDashoffset = len * (1 - paint);
+    path.style.opacity = 1 - land;
+    intro.style.setProperty('--desk', land);
+    intro.style.setProperty('--t1', 1 - clamp((p - .12) / .1));
+    intro.style.setProperty('--t1o', clamp((p - .12) / .1) * 30 + 'px');
+    intro.style.setProperty('--t2', clamp((p - .86) / .1));
+  }
+  const tick = () => { if (!raf) raf = requestAnimationFrame(update); };
+  addEventListener('scroll', tick, { passive: true });
+  addEventListener('resize', layout);
+  if (brushImg.complete) layout(); else brushImg.addEventListener('load', layout);
+  layout();
+}
+}
 }

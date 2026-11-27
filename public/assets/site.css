@@ -92,6 +92,41 @@ p{margin:0}
 }
 .ledge{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 
+
+/* intro: a brush floats, swivels, paints a stroke, then sets down on the desk */
+.intro{position:relative;background:radial-gradient(ellipse 60% 55% at 50% 45%,rgba(201,162,76,.16),transparent 70%),var(--deep);color:#fff}
+.ipin{position:relative;height:100vh;height:100svh;overflow:hidden}
+.intro .desk img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--dx,50%) 50%}
+.intro .desk.empty{display:none}
+.intro .desk::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,36,31,.35),transparent 35%,transparent 70%,rgba(16,36,31,.55))}
+.stroke{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none}
+.bfly{position:absolute;left:0;top:0;width:var(--bw,60vw);transform-origin:99% 50%;will-change:transform;pointer-events:none;display:none;filter:drop-shadow(0 18px 18px rgba(0,0,0,.45))}
+.bfly img{width:100%;height:auto}
+.itext{position:absolute;left:0;right:0;top:19%;text-align:center;display:grid;gap:10px;padding:0 20px}
+.itext .hand{color:var(--gold);font-size:28px}
+.ititle{font-size:clamp(34px,6vw,72px);text-shadow:0 4px 30px rgba(0,0,0,.4)}
+.itext .soft{color:#d8e2dc}
+.iend{position:absolute;left:0;right:0;bottom:12%;text-align:center}
+.iend p{font-size:clamp(30px,4.5vw,54px);color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+.iskip{position:absolute;right:max(5vw,18px);top:86px;font-weight:700;font-size:14px;color:#fff;background:rgba(16,36,31,.55);padding:8px 14px;border-radius:999px;text-decoration:none;border:1px solid rgba(201,162,76,.5)}
+.icue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font-size:13px;font-weight:700;color:#cfdad4;display:flex;flex-direction:column;align-items:center;gap:8px}
+.icue::after{content:"";width:16px;height:26px;border:2px solid currentColor;border-radius:9px;background:radial-gradient(circle at 50% 30%,currentColor 2px,transparent 3px)}
+/* static (no-JS / reduced motion): finished desk scene with both lines */
+.intro:not(.anim) .itext{top:14%}
+.intro:not(.anim) .icue{display:none}
+/* animated */
+.intro.anim{height:260vh}
+.intro.anim .ipin{position:sticky;top:0}
+.intro.anim .bfly,.intro.anim .stroke{display:block}
+.intro.anim .desk.empty{display:block;opacity:var(--desk,0)}
+.intro.anim .desk.full{opacity:var(--swap,0)}
+.intro.anim .itext{opacity:var(--t1,1);transform:translateY(calc(0px - var(--t1o,0px)))}
+.intro.anim .iend{opacity:var(--t2,0)}
+.intro.anim .icue{opacity:var(--t1,1)}
+.intro.anim .bfly.idle img{animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) rotate(-1.5deg)}}
+@media(max-width:720px){.intro.anim{height:200vh}.intro{--dx:96%}.itext{top:22%}.iend{bottom:24%}.iskip{top:82px}}
+
 /* section heads */
 .head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:14px 40px;margin-bottom:clamp(24px,3vw,40px)}
 .head p{max-width:34em}

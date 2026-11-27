@@ -3,7 +3,7 @@ import { IMG } from "./images.mts"
 export const SITE = "Little Garden Art"
 export const ARTIST = "Patricia Ann Wedel"
 export const IG = "https://www.instagram.com/littlegardenart/"
-const ASSET_V = "3"
+const ASSET_V = "5"
 
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!))
 export const money = (n: number) => "$" + (Number.isInteger(+n) ? +n : (+n).toFixed(2))
@@ -114,13 +114,27 @@ export function home(c: any, o: string) {
   const byId = (id: string) => c.art.find((a: any) => a.id === id)
   const pr = byId("pronghorn")
   const featured = c.art.filter((a: any) => a.c !== "little").slice(0, 6)
-  const hero = `<section class="hero teal" aria-label="Featured work">
+  const intro = `<section class="intro" id="intro" aria-label="Welcome">
+ <div class="ipin">
+  <picture class="desk empty"><source type="image/webp" srcset="/img/desk-empty-1200.webp 1200w, /img/desk-empty-1920.webp 1920w" sizes="100vw"><img src="/img/desk.jpg" alt="" width="1920" height="1080"></picture>
+  <picture class="desk full"><source type="image/webp" srcset="/img/desk-1200.webp 1200w, /img/desk-1920.webp 1920w" sizes="100vw"><img src="/img/desk.jpg" alt="A paintbrush resting on Patsy's teal painted desk" width="1920" height="1080" fetchpriority="high"></picture>
+  <svg class="stroke" aria-hidden="true"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="7"/></filter>
+   <linearGradient id="gold" x1="0" x2="1"><stop offset="0" stop-color="#b98f3a"/><stop offset=".5" stop-color="#e8c873"/><stop offset="1" stop-color="#c9a24c"/></linearGradient></defs>
+   <path id="sp" fill="none" stroke="url(#gold)" stroke-width="16" stroke-linecap="round" filter="url(#rough)"/></svg>
+  <div class="bfly" aria-hidden="true"><img class="brush" src="/img/brush.webp" alt="" width="1400" height="74"></div>
+  <div class="itext"><span class="hand">Little Garden Art</span><h1 class="ititle">Every painting begins with a brush</h1><p class="soft">Original art by Patsy Wedel</p></div>
+  <div class="iend"><p class="hand">&hellip;and ends on your wall.</p></div>
+  <a class="iskip" href="#paintings">Skip to the paintings &darr;</a>
+  <span class="icue" aria-hidden="true">Scroll</span>
+ </div>
+</section>`
+  const hero = `<section class="hero teal" id="paintings" aria-label="Featured work">
  <div class="pin"><div class="wrap">
   <div class="slides">
    <article class="slide is-on" aria-roledescription="slide" aria-label="1 of 3">
     <div class="txt"><span class="count">I.</span>
       <span class="kick">Christmas cards &middot; <b>order by ${esc(c.deadline)}</b></span>
-      <h1>Christmas on Main Street</h1>
+      <h2 style="font-size:clamp(36px,5.6vw,60px)">Christmas on Main Street</h2>
       <p class="lede soft">Snow falls on the soda fountain, the saddlery and the 1911 bank while a young family walks the new baby past lit shop windows. Now Patsy&rsquo;s Warmest Wishes card.</p>
       <p class="cast"><span class="hand">Starring</span> the family with the pram &middot; the patient black horse &middot; the 1911 bank</p>
       <div class="btns"><a class="btn gold" href="/christmas-cards">Shop Christmas cards</a><a class="btn ghost" href="/shop">See the originals</a></div></div>
@@ -154,7 +168,7 @@ export function home(c: any, o: string) {
     <span class="scrollhint">Scroll</span></div>
  </div></div>
 </section><div class="ledge"></div>`
-  const body = `${hero}
+  const body = `${intro}${hero}
 <section class="band"><div class="wrap split">
   <div class="txt"><span class="eyebrow">Welcome to the gallery</span>
     <p class="quote">Snowy main streets, red barns, country churches, and the little creatures that live just past the garden gate, all painted by hand by Patsy Wedel.</p></div>
