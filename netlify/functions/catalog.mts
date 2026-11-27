@@ -1,13 +1,10 @@
 import type { Config, Context } from "@netlify/functions"
-import { getStore } from "@netlify/blobs"
+import { purgeCache } from "@netlify/functions"
 import { COOKIE, isAuthed } from "../lib/auth.mts"
-import { DEFAULT_CATALOG } from "../lib/catalog-default.mts"
+import { loadCatalog, store, KEY, CACHE_TAG } from "../lib/store.mts"
 
-const STORE = "littlegardenart"
-const KEY = "catalog"
 const CATS = ["acrylic", "watercolor", "framed", "little"]
 
-const store = () => getStore({ name: STORE, consistency: "strong" })
 
 const str = (v: unknown, max: number) => String(v ?? "").slice(0, max).trim()
 const money = (v: unknown) => {
@@ -42,6 +39,7 @@ function clean(input: any, base: any) {
       ...a,
       t: str(n.t, 80) || a.t,
       m: str(n.m, 120),
+      story: str(n.story, 1200),
       size: str(n.size, 40),
       c: CATS.includes(n.c) ? n.c : a.c,
       p: price ?? a.p,
@@ -53,10 +51,7 @@ function clean(input: any, base: any) {
   return out
 }
 
-async function load() {
-  const saved = await store().get(KEY, { type: "json" })
-  return saved ?? DEFAULT_CATALOG
-}
+const load = loadCatalog
 
 export default async (req: Request, context: Context) => {
   if (req.method === "GET") {
@@ -76,6 +71,8 @@ export default async (req: Request, context: Context) => {
   try {
     const next = clean(await req.json(), await load())
     await store().setJSON(KEY, next)
+    // refresh every cached page so new prices show right away
+    try { await purgeCache({ tags: [CACHE_TAG] }) } catch (e) { console.error("purge failed", e) }
     return Response.json(next, { headers: { "cache-control": "no-store" } })
   } catch (e) {
     console.error("catalog save failed", e)

@@ -1,0 +1,2 @@
+// width/height of each source image, for layout stability
+export const IMG: Record<string,[number,number]> = {"card-warmest": [1282, 1400], "chile": [1400, 1072], "church": [1073, 1400], "cottage": [984, 1260], "dunes": [1400, 1390], "farmhouse": [1400, 1057], "hedgehog": [1031, 1400], "main-street": [1400, 1010], "moose": [1079, 1400], "mouse": [1063, 1400], "mushrooms": [1142, 1400], "nativity": [1400, 1261], "pronghorn": [957, 712], "red-barn": [1400, 1144], "seashells": [1400, 1105], "studio": [1400, 1050], "sunflower": [1219, 1400]}
