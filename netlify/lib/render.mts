@@ -3,7 +3,7 @@ import { IMG } from "./images.mts"
 export const SITE = "Little Garden Art"
 export const ARTIST = "Patricia Ann Wedel"
 export const IG = "https://www.instagram.com/littlegardenart/"
-const ASSET_V = "9"
+const ASSET_V = "10"
 
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!))
 export const money = (n: number) => "$" + (Number.isInteger(+n) ? +n : (+n).toFixed(2))
@@ -47,7 +47,7 @@ export function layout(p: Page) {
 <meta name="theme-color" content="#10241f">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700;800&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Nunito+Sans:wght@400;600;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css?v=${ASSET_V}">
 <script type="application/ld+json">${json(graph)}</script>
 </head>
@@ -113,7 +113,7 @@ const crumbs = (o: string, items: [string, string][]) => ({ "@type": "Breadcrumb
 export function home(c: any, o: string) {
   const byId = (id: string) => c.art.find((a: any) => a.id === id)
   const pr = byId("pronghorn")
-  const featured = c.art.filter((a: any) => a.c !== "little").slice(0, 6)
+  const featured = ["pronghorn", "moose", "seashells"].map(id => c.art.find((a: any) => a.id === id)).filter(Boolean)
   const intro = `<section class="intro" id="intro" aria-label="Welcome">
  <div class="ipin">
   <picture class="desk empty"><source type="image/webp" srcset="/img/desk-empty-1200.webp 1200w, /img/desk-empty-1920.webp 1920w" sizes="100vw"><img src="/img/desk.jpg" alt="" width="1920" height="1080"></picture>
