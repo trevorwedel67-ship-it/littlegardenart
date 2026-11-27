@@ -134,9 +134,9 @@ if (intro && !reduce.matches) {
     const r = intro.getBoundingClientRect(), span = Math.max(1, intro.offsetHeight - H);
     const p = clamp(-r.top / span), m = W < 720;
     const AR = 114 / 2152;                                   // brush height / width
-    const big = m ? W * .92 : Math.min(W * .66, 980);
-    const blow = big * (m ? 1.25 : 1.45), mid = big * .82, drawW = Math.min(W * (m ? .55 : .3), 480);
-    const C0 = { x: W / 2, y: H * (m ? .58 : .6) };
+    // starts standing vertical, tip down, sized to the screen height
+    const big = H * (m ? .5 : .54);
+    const blow = H * .86, mid = H * .62, drawW = Math.min(W * (m ? .55 : .3), 480);
     // phases
     const pA = ease(clamp(p / .13));                         // blow up
     const pB = ease(clamp((p - .13) / .09));                 // shrink back
@@ -152,7 +152,7 @@ if (intro && !reduce.matches) {
     // angle (butt -> tip direction) and vertical spin
     const spinZ = 360 * ease(pC), tilt = 22 * Math.sin(Math.PI * pC);
     const held = 128;
-    let ang = -3 + 3 * pA + spinZ;
+    let ang = 90 + spinZ;
     { let d = held - ang; d = ((d + 540) % 360) - 180; ang += d * pD; }
     // tip follows the stroke while painting
     const at = Math.max(.001, paint) * len, pt = path.getPointAtLength(at), pb = path.getPointAtLength(Math.max(0, at - 8));
@@ -163,7 +163,8 @@ if (intro && !reduce.matches) {
     const rad = ang * Math.PI / 180, ux = Math.cos(rad), uy = Math.sin(rad);
     // centre: floating in the middle, then tip-anchored on the stroke, then on the desk
     const tipAt = (tx, ty, ww) => ({ x: tx - ux * ww * .49, y: ty - uy * ww * .49 });
-    let c = { x: C0.x, y: C0.y + Math.sin(p * 40) * 0 };
+    const C0 = { x: W / 2, y: lerp(H * (m ? .66 : .71), H * .53, Math.max(pA, 1 - (1 - pA) * 1)) };
+    let c = { x: C0.x, y: C0.y };
     const start = path.getPointAtLength(0);
     const cs = tipAt(start.x, start.y, w);
     c = { x: lerp(C0.x, cs.x, pD), y: lerp(C0.y, cs.y, pD) };

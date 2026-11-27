@@ -3,7 +3,7 @@ import { IMG } from "./images.mts"
 export const SITE = "Little Garden Art"
 export const ARTIST = "Patricia Ann Wedel"
 export const IG = "https://www.instagram.com/littlegardenart/"
-const ASSET_V = "7"
+const ASSET_V = "8"
 
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!))
 export const money = (n: number) => "$" + (Number.isInteger(+n) ? +n : (+n).toFixed(2))
