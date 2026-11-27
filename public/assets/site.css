@@ -115,7 +115,7 @@ p{margin:0}
 .intro:not(.anim) .itext{top:14%}
 .intro:not(.anim) .icue{display:none}
 /* animated */
-.intro.anim{height:360vh}
+.intro.anim{height:420vh}
 .intro.anim .ipin{position:sticky;top:0}
 .intro.anim .bfly,.intro.anim .stroke{display:block}
 .intro.anim .desk.empty{display:block;opacity:var(--desk,0)}
@@ -125,7 +125,7 @@ p{margin:0}
 .intro.anim .icue{opacity:var(--t1,1)}
 .intro.anim .bfly.idle img{animation:bob 3.2s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-10px) rotate(-1.5deg)}}
-@media(max-width:720px){.intro.anim{height:290vh}.intro{--dx:96%}.itext{top:22%}.iend{bottom:24%}.iskip{top:82px}}
+@media(max-width:720px){.intro.anim{height:330vh}.intro{--dx:96%}.itext{top:22%}.iend{bottom:24%}.iskip{top:82px}}
 
 /* section heads */
 .head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:14px 40px;margin-bottom:clamp(24px,3vw,40px)}
