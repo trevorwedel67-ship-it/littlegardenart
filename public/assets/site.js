@@ -132,33 +132,61 @@ if (intro && !reduce.matches) {
   function update() {
     raf = 0;
     const r = intro.getBoundingClientRect(), span = Math.max(1, intro.offsetHeight - H);
-    const p = clamp(-r.top / span);
-    const baseW = Math.min(W * (W < 720 ? .55 : .3), 480);
-    const spin = ease(clamp((p - .04) / .16));               // swivel in place first
-    const paint = clamp((p - .2) / .38), land = ease(clamp((p - .6) / .25)), swap = clamp((p - .86) / .08);
+    const p = clamp(-r.top / span), m = W < 720;
+    const AR = 114 / 2152;                                   // brush height / width
+    const big = m ? W * .92 : Math.min(W * .66, 980);
+    const blow = big * (m ? 1.25 : 1.45), mid = big * .82, drawW = Math.min(W * (m ? .55 : .3), 480);
+    const C0 = { x: W / 2, y: H * (m ? .58 : .6) };
+    // phases
+    const pA = ease(clamp(p / .13));                         // blow up
+    const pB = ease(clamp((p - .13) / .09));                 // shrink back
+    const pC = clamp((p - .22) / .18);                       // vertical spin, swelling in the middle
+    const pD = ease(clamp((p - .40) / .10));                 // shrink and move to the start of the stroke
+    const paint = clamp((p - .50) / .26);
+    const land = ease(clamp((p - .77) / .13));
+    const swap = clamp((p - .90) / .06);
+    // size
+    let w = lerp(big, blow, pA); w = lerp(w, mid, pB);
+    w = w * (1 + .42 * Math.sin(Math.PI * pC));
+    w = lerp(w, drawW, pD);
+    // angle (butt -> tip direction) and vertical spin
+    const spinZ = 360 * ease(pC), tilt = 22 * Math.sin(Math.PI * pC);
+    const held = 128;
+    let ang = -3 + 3 * pA + spinZ;
+    { let d = held - ang; d = ((d + 540) % 360) - 180; ang += d * pD; }
+    // tip follows the stroke while painting
     const at = Math.max(.001, paint) * len, pt = path.getPointAtLength(at), pb = path.getPointAtLength(Math.max(0, at - 8));
-    const tang = Math.atan2(pt.y - pb.y, pt.x - pb.x) * 180 / Math.PI;
-    // held like a pen: handle up and to the right, nudged by the stroke direction
-    const held = 128 + (paint > 0 ? Math.sin(tang * Math.PI / 180) * 14 : 0);
-    let a = held + 360 * spin;
+    if (paint > 0) ang = held + Math.sin(Math.atan2(pt.y - pb.y, pt.x - pb.x)) * 14;
     const L = landing();
-    const x = lerp(pt.x, L.x, land), y = lerp(pt.y, L.y, land);
-    let d = L.a - a; d = ((d + 540) % 360) - 180; a = a + d * land;
-    const w = lerp(baseW, L.w, land);
-    const roll = (spin + paint) * Math.PI * 2;               // turning on its own length
-    const sy = (.72 + .28 * Math.cos(roll)) * (1 - land) + land;
+    { let d = L.a - ang; d = ((d + 540) % 360) - 180; ang += d * land; }
+    w = lerp(w, L.w, land);
+    const rad = ang * Math.PI / 180, ux = Math.cos(rad), uy = Math.sin(rad);
+    // centre: floating in the middle, then tip-anchored on the stroke, then on the desk
+    const tipAt = (tx, ty, ww) => ({ x: tx - ux * ww * .49, y: ty - uy * ww * .49 });
+    let c = { x: C0.x, y: C0.y + Math.sin(p * 40) * 0 };
+    const start = path.getPointAtLength(0);
+    const cs = tipAt(start.x, start.y, w);
+    c = { x: lerp(C0.x, cs.x, pD), y: lerp(C0.y, cs.y, pD) };
+    if (paint > 0) c = tipAt(pt.x, pt.y, w);
+    const cl = tipAt(L.x, L.y, w);
     const lift = Math.sin(Math.PI * land) * -40;
+    c = { x: lerp(c.x, cl.x, land), y: lerp(c.y, cl.y, land) + lift };
+    const h = w * AR;
     fly.style.setProperty('--bw', w + 'px');
-    fly.style.transform = `translate(${x - w * .99}px, ${y - (w * 74 / 1400) / 2 + lift}px) rotate(${a}deg) scaleY(${sy})`;
+    fly.style.transform = `translate(${c.x - w / 2}px, ${c.y - h / 2}px) perspective(1600px) rotate(${ang}deg) rotateX(${tilt}deg)`;
+    // light and shadow: soft and far while high, tight on landing; light rolls across during the spin
+    const air = 1 - land, sh = 10 + 34 * air, bl = 8 + 30 * air, al = .55 - .2 * air;
+    const lightv = .86 + .14 * Math.cos(2 * spinZ * Math.PI / 180);
+    fly.style.filter = `brightness(${lightv}) drop-shadow(0 ${sh}px ${bl}px rgba(0,0,0,${al}))`;
     fly.style.opacity = 1 - swap;
-    intro.style.setProperty('--swap', swap);
-    fly.classList.toggle('idle', p < .03);
+    fly.classList.toggle('idle', p < .02);
     path.style.strokeDashoffset = len * (1 - paint);
     path.style.opacity = 1 - land;
+    intro.style.setProperty('--swap', swap);
     intro.style.setProperty('--desk', land);
-    intro.style.setProperty('--t1', 1 - clamp((p - .12) / .1));
-    intro.style.setProperty('--t1o', clamp((p - .12) / .1) * 30 + 'px');
-    intro.style.setProperty('--t2', clamp((p - .86) / .1));
+    intro.style.setProperty('--t1', 1 - clamp(p / .07));
+    intro.style.setProperty('--t1o', clamp(p / .07) * 30 + 'px');
+    intro.style.setProperty('--t2', clamp((p - .92) / .06));
   }
   const tick = () => { if (!raf) raf = requestAnimationFrame(update); };
   addEventListener('scroll', tick, { passive: true });

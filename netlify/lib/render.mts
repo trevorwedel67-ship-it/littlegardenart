@@ -3,7 +3,7 @@ import { IMG } from "./images.mts"
 export const SITE = "Little Garden Art"
 export const ARTIST = "Patricia Ann Wedel"
 export const IG = "https://www.instagram.com/littlegardenart/"
-const ASSET_V = "6"
+const ASSET_V = "7"
 
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!))
 export const money = (n: number) => "$" + (Number.isInteger(+n) ? +n : (+n).toFixed(2))
@@ -121,7 +121,7 @@ export function home(c: any, o: string) {
   <svg class="stroke" aria-hidden="true"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="7"/></filter>
    <linearGradient id="gold" x1="0" x2="1"><stop offset="0" stop-color="#b98f3a"/><stop offset=".5" stop-color="#e8c873"/><stop offset="1" stop-color="#c9a24c"/></linearGradient></defs>
    <path id="sp" fill="none" stroke="url(#gold)" stroke-width="16" stroke-linecap="round" filter="url(#rough)"/></svg>
-  <div class="bfly" aria-hidden="true"><img class="brush" src="/img/brush.webp" alt="" width="1400" height="74"></div>
+  <div class="bfly" aria-hidden="true"><img class="brush" src="/img/brush-2x.webp" alt="" width="2152" height="114"></div>
   <div class="itext"><span class="hand">Little Garden Art</span><h1 class="ititle">Every painting begins with a brush</h1><p class="soft">Original art by Patsy Wedel</p></div>
   <div class="iend"><p class="hand">&hellip;and ends on your wall.</p></div>
  </div>
